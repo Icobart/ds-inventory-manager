@@ -2,7 +2,7 @@
 
 A decentralized, fault-tolerant inventory management system built in Go. This project explores distributed systems concepts by removing the central database in favor of local node state, prioritizing Availability and Partition Tolerance (AP in the CAP theorem). 
 
-This project was developed for the Distributed Systems course at the University of Bologna.
+This project is intended for the Distributed Systems course at the University of Bologna.
 
 ## Architecture Overview
 
