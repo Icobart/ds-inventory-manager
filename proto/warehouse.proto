@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+message VectorClock {
+    map<string, int32> clocks = 1;
+}
+
+// Client <-> Node Messages
+message UpdateStockRequest {
+    string item_id = 1;
+    int32 quantity_change = 2;
+}
+
+message UpdateStockResponse {
+    bool success = 1;
+    int32 new_quantity = 2;
+    VectorClock current_clock = 3; // Returns the updated clock after the operation
+}
+
+// Node <-> Node Messages
+message SyncLedgerRequest {
+    string source_node_id = 1;
+    VectorClock clock = 2; // The vector clock of the sending node
+    map<string, int32> inventory = 3; // The current state of the sender's inventory
+}
+
+message SyncLedgerResponse {
+    bool success = 1;
+    VectorClock merged_clock = 2; // The new clock after resolving conflicts
+    map<string, int32> merged_inventory = 3; // The definitive inventory state after merge
+}
+
+service InventoryManager {
+    rpc UpdateLocalStock (UpdateStockRequest) returns (UpdateStockResponse);
+    rpc SyncLedger (SyncLedgerRequest) returns (SyncLedgerResponse);
+}
+
