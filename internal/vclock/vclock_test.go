@@ -69,3 +69,27 @@ func TestCompare(t *testing.T) {
 		})
 	}
 }
+
+func TestMerge(t *testing.T) {
+	// Create two divergent clocks
+	clock1 := &pb.VectorClock{
+		Clocks: map[string]int32{"A": 2, "B": 1, "C": 5},
+	}
+	clock2 := &pb.VectorClock{
+		Clocks: map[string]int32{"A": 1, "B": 3, "D": 4},
+	}
+	// Merge the clocks
+	merged := Merge(clock1, clock2)
+	// The result should contain the max value from both clocks
+	expected := map[string]int32{"A": 2, "B": 3, "C": 5, "D": 4}
+
+	if len(merged.Clocks) != len(expected) {
+		t.Fatalf("Expected %d nodes in merged clock, got %d", len(expected), len(merged.Clocks))
+	}
+
+	for node, expectedVal := range expected {
+		if merged.Clocks[node] != expectedVal {
+			t.Errorf("Expected node %s to be %d, got %d", node, expectedVal, merged.Clocks[node])
+		}
+	}
+}

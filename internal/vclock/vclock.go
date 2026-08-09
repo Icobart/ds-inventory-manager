@@ -1,6 +1,8 @@
 package vclock
 
 import (
+	"maps"
+
 	"github.com/Icobart/ds-inventory-manager/pb"
 )
 
@@ -62,4 +64,29 @@ func Compare(v1, v2 *pb.VectorClock) Relation {
 		return After
 	}
 	return Concurrent
+}
+
+// Merge combines two vector clocks by taking the pairwise maximum of all node counters.
+// It returns a newly allocated VectorClock to avoid changing the originals.
+func Merge(v1, v2 *pb.VectorClock) *pb.VectorClock {
+	merged := &pb.VectorClock{
+		Clocks: make(map[string]int32),
+	}
+
+	getMap := func(vc *pb.VectorClock) map[string]int32 {
+		if vc != nil && vc.Clocks != nil {
+			return vc.Clocks
+		}
+		return make(map[string]int32)
+	}
+
+	m1 := getMap(v1)
+	m2 := getMap(v2)
+	maps.Copy(merged.Clocks, m1)
+	for node, val2 := range m2 {
+		if val1, exists := merged.Clocks[node]; !exists || val2 > val1 {
+			merged.Clocks[node] = val2
+		}
+	}
+	return merged
 }
