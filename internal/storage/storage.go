@@ -53,22 +53,18 @@ func SaveVectorClock(db *sql.DB, vc *pb.VectorClock) error {
 	if err != nil {
 		return err
 	}
-
 	// Clear the old clock state to prepare for the new one
 	_, err = tx.Exec(`DELETE FROM vector_clocks`)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-
-	// Prepare the insert statement for efficiency
 	stmt, err := tx.Prepare(`INSERT INTO vector_clocks (node_id, counter) VALUES (?, ?)`)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 	defer stmt.Close()
-
 	// Insert every node's counter from the map
 	for nodeID, counter := range vc.GetClocks() {
 		_, err = stmt.Exec(nodeID, counter)
@@ -77,8 +73,6 @@ func SaveVectorClock(db *sql.DB, vc *pb.VectorClock) error {
 			return err
 		}
 	}
-
-	// Commit the transaction
 	return tx.Commit()
 }
 
@@ -90,11 +84,9 @@ func GetVectorClock(db *sql.DB) (*pb.VectorClock, error) {
 		return nil, err
 	}
 	defer rows.Close()
-
 	vc := &pb.VectorClock{
 		Clocks: make(map[string]int32),
 	}
-
 	// Iterate through all rows and reconstruct the map
 	for rows.Next() {
 		var nodeID string
@@ -104,6 +96,5 @@ func GetVectorClock(db *sql.DB) (*pb.VectorClock, error) {
 		}
 		vc.Clocks[nodeID] = counter
 	}
-
 	return vc, nil
 }
