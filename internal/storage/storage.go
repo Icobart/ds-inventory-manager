@@ -2,6 +2,8 @@ package storage
 
 import (
 	"database/sql"
+
+	"github.com/Icobart/ds-inventory-manager/pb"
 )
 
 // InitDB creates the necessary tables for the inventory and vector clocks if they don't exist.
@@ -42,4 +44,66 @@ func GetItem(db *sql.DB, itemID string) (int32, error) {
 		return 0, nil
 	}
 	return qty, err
+}
+
+// SaveVectorClock overwrites the current vector clock state in the database.
+func SaveVectorClock(db *sql.DB, vc *pb.VectorClock) error {
+	// Start a transaction
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+
+	// Clear the old clock state to prepare for the new one
+	_, err = tx.Exec(`DELETE FROM vector_clocks`)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Prepare the insert statement for efficiency
+	stmt, err := tx.Prepare(`INSERT INTO vector_clocks (node_id, counter) VALUES (?, ?)`)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert every node's counter from the map
+	for nodeID, counter := range vc.GetClocks() {
+		_, err = stmt.Exec(nodeID, counter)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
+}
+
+// GetVectorClock retrieves the entire vector clock map for this node from SQLite.
+func GetVectorClock(db *sql.DB) (*pb.VectorClock, error) {
+	query := `SELECT node_id, counter FROM vector_clocks`
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	vc := &pb.VectorClock{
+		Clocks: make(map[string]int32),
+	}
+
+	// Iterate through all rows and reconstruct the map
+	for rows.Next() {
+		var nodeID string
+		var counter int32
+		if err := rows.Scan(&nodeID, &counter); err != nil {
+			return nil, err
+		}
+		vc.Clocks[nodeID] = counter
+	}
+
+	return vc, nil
 }
