@@ -50,3 +50,29 @@ func (s *NodeServer) UpdateLocalStock(ctx context.Context, req *pb.UpdateStockRe
 		CurrentClock: vc,
 	}, nil
 }
+
+// SyncLedger handles incoming state synchronization requests from peer nodes.
+// It merges the remote vector clock with the local one to maintain causality,
+// applies the remote inventory state to the local ledger, and returns the reconciled state.
+func (s *NodeServer) SyncLedger(ctx context.Context, req *pb.SyncLedgerRequest) (*pb.SyncLedgerResponse, error) {
+	localClock, err := storage.GetVectorClock(s.db)
+	if err != nil {
+		return nil, err
+	}
+	mergedClock := vclock.Merge(localClock, req.Clock)
+	if err := storage.SaveVectorClock(s.db, mergedClock); err != nil {
+		return nil, err
+	}
+	mergedInventory := make(map[string]int32)
+	for itemID, remoteQty := range req.Inventory {
+		if err := storage.UpdateItem(s.db, itemID, remoteQty); err != nil {
+			return nil, err
+		}
+		mergedInventory[itemID] = remoteQty
+	}
+	return &pb.SyncLedgerResponse{
+		Success:         true,
+		MergedClock:     mergedClock,
+		MergedInventory: mergedInventory,
+	}, nil
+}
