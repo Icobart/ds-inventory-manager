@@ -66,3 +66,23 @@ func TestVectorClockOperations(t *testing.T) {
 		t.Errorf("Retrieved clock does not match saved clock. Got: %v", retrieved.Clocks)
 	}
 }
+
+func TestGetAllItems(t *testing.T) {
+	db, err := sql.Open("sqlite", ":memory:")
+	if err != nil {
+		t.Fatalf("Failed to open database: %v", err)
+	}
+	defer db.Close()
+	InitDB(db)
+
+	// Add multiple items
+	UpdateItem(db, "item-1", 10)
+	UpdateItem(db, "item-2", 20)
+	inventory, err := GetAllItems(db)
+	if err != nil {
+		t.Fatalf("Failed to get all items: %v", err)
+	}
+	if inventory["item-1"] != 10 || inventory["item-2"] != 20 {
+		t.Errorf("Mismatch in retrieved inventory: %v", inventory)
+	}
+}

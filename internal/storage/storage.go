@@ -98,3 +98,23 @@ func GetVectorClock(db *sql.DB) (*pb.VectorClock, error) {
 	}
 	return vc, nil
 }
+
+// GetAllItems returns the entire inventory state as a map.
+func GetAllItems(db *sql.DB) (map[string]int32, error) {
+	query := `SELECT item_id, quantity FROM inventory`
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	inventory := make(map[string]int32)
+	for rows.Next() {
+		var itemID string
+		var qty int32
+		if err := rows.Scan(&itemID, &qty); err != nil {
+			return nil, err
+		}
+		inventory[itemID] = qty
+	}
+	return inventory, nil
+}
