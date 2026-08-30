@@ -35,3 +35,17 @@ func TestBuildSyncPayload(t *testing.T) {
 		t.Errorf("Clock payload incorrect: %v", req.Clock.Clocks)
 	}
 }
+
+func TestSendGossipToOfflinePeer(t *testing.T) {
+	// Create a dummy payload
+	req := &pb.SyncLedgerRequest{
+		SourceNodeId: "node-A",
+	}
+
+	// Try to send it to an offline port
+	err := SendGossip("localhost:9999", req)
+	// Expected a network error, NOT a panic or crash
+	if err == nil {
+		t.Fatalf("Expected connection error when gossiping to offline peer, got nil")
+	}
+}

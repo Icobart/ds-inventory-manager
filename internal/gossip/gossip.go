@@ -6,6 +6,12 @@ import (
 
 	"github.com/Icobart/ds-inventory-manager/internal/storage"
 	"github.com/Icobart/ds-inventory-manager/pb"
+
+	"context"
+	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // BuildSyncPayload extracts the node's entire state to send to a peer.
@@ -23,4 +29,19 @@ func BuildSyncPayload(nodeID string, db *sql.DB) (*pb.SyncLedgerRequest, error) 
 		Clock:        clock,
 		Inventory:    inventory,
 	}, nil
+}
+
+// SendGossip opens a connection to a target peer and sends the sync payload.
+func SendGossip(target string, req *pb.SyncLedgerRequest) error {
+	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	client := pb.NewInventoryManagerClient(conn)
+	// Timeout so a dead peer doesn't freeze this node
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	_, err = client.SyncLedger(ctx, req)
+	return err
 }
