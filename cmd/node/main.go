@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strings"
+	"time"
 
 	"google.golang.org/grpc"
 
+	"github.com/Icobart/ds-inventory-manager/internal/gossip"
 	"github.com/Icobart/ds-inventory-manager/internal/server"
 	"github.com/Icobart/ds-inventory-manager/internal/storage"
 	"github.com/Icobart/ds-inventory-manager/pb"
@@ -18,6 +21,7 @@ import (
 func main() {
 	nodeID := flag.String("id", "node-1", "The unique identifier for this node")
 	port := flag.Int("port", 50051, "The port the gRPC server will listen on")
+	peersFlag := flag.String("peers", "", "Comma-separated list of peer addresses (for example: localhost:50052)")
 	flag.Parse()
 
 	log.Printf("Starting Warehouse Node: %s on port %d", *nodeID, *port)
@@ -35,6 +39,13 @@ func main() {
 	}
 	log.Println("Database initialized successfully.")
 
+	var peers []string
+	if *peersFlag != "" {
+		peers = strings.Split(*peersFlag, ",")
+	}
+	// Starting the background gossip engine, set to sync every 5 seconds
+	gossip.StartGossipLoop(*nodeID, db, peers, 5*time.Second)
+	log.Printf("Gossip engine started. Known peers: %v", peers)
 	// Starting the TCP listener
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
