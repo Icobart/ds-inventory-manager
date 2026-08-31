@@ -8,6 +8,7 @@ import (
 	"github.com/Icobart/ds-inventory-manager/pb"
 
 	"context"
+	"log"
 	"time"
 
 	"google.golang.org/grpc"
@@ -44,4 +45,27 @@ func SendGossip(target string, req *pb.SyncLedgerRequest) error {
 	defer cancel()
 	_, err = client.SyncLedger(ctx, req)
 	return err
+}
+
+// StartGossipLoop creates a background Goroutine that periodically syncs state with peers.
+func StartGossipLoop(nodeID string, db *sql.DB, peers []string, interval time.Duration) {
+	// Create a background thread with the loop
+	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+		for range ticker.C {
+			req, err := BuildSyncPayload(nodeID, db)
+			if err != nil {
+				log.Printf("[Gossip] Failed to build payload: %v", err)
+				continue
+			}
+			for _, peer := range peers {
+				if err := SendGossip(peer, req); err != nil {
+					log.Printf("[Gossip] Peer %s unreachable: %v", peer, err)
+				} else {
+					log.Printf("[Gossip] Successfully synced state with %s", peer)
+				}
+			}
+		}
+	}()
 }

@@ -7,6 +7,8 @@ import (
 	"github.com/Icobart/ds-inventory-manager/internal/storage"
 	"github.com/Icobart/ds-inventory-manager/pb"
 	_ "modernc.org/sqlite"
+
+	"time"
 )
 
 func TestBuildSyncPayload(t *testing.T) {
@@ -48,4 +50,16 @@ func TestSendGossipToOfflinePeer(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected connection error when gossiping to offline peer, got nil")
 	}
+}
+
+func TestStartGossipLoop(t *testing.T) {
+	db, _ := sql.Open("sqlite", ":memory:")
+	defer db.Close()
+	storage.InitDB(db)
+
+	// Start the loop with an empty peer list and an interval
+	// The goroutine should detach and run in the background
+	StartGossipLoop("node-A", db, []string{}, 10*time.Millisecond)
+	// Wait to let the ticker fire a few times
+	time.Sleep(50 * time.Millisecond)
 }
