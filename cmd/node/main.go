@@ -33,6 +33,7 @@ func main() {
 		log.Fatalf("Failed to open database: %v", err)
 	}
 	defer db.Close()
+	db.SetMaxOpenConns(1)
 
 	if err := storage.InitDB(db); err != nil {
 		log.Fatalf("Failed to initialize database tables: %v", err)
