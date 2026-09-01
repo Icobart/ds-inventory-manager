@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-a-svc
+spec:
+  selector:
+    app: warehouse-node-a
+  ports:
+    - protocol: TCP
+      port: 50051
+      targetPort: 50051
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warehouse-node-a
+  template:
+    metadata:
+      labels:
+        app: warehouse-node-a
+    spec:
+      containers:
+      - name: node
+        image: warehouse-node:latest
+        imagePullPolicy: Never # use local image
+        ports:
+        - containerPort: 50051
+        args: ["-id", "node-A", "-port", "50051", "-peers", "node-b-svc:50051,node-c-svc:50051"]
