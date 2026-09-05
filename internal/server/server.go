@@ -88,3 +88,18 @@ func (s *NodeServer) SyncLedger(ctx context.Context, req *pb.SyncLedgerRequest) 
 		MergedInventory: mergedInventory,
 	}, nil
 }
+
+func (s *NodeServer) GetLocalStock(ctx context.Context, req *pb.GetStockRequest) (*pb.GetStockResponse, error) {
+	qty, err := storage.GetItem(s.db, req.ItemId)
+	if err != nil {
+		return nil, err
+	}
+	vc, err := storage.GetVectorClock(s.db)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetStockResponse{
+		Quantity:     qty,
+		CurrentClock: vc,
+	}, nil
+}

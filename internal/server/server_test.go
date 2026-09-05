@@ -116,3 +116,30 @@ func TestSyncLedger_ConcurrentMerge(t *testing.T) {
 		t.Errorf("Expected merged inventory for tablet to be 150, got %d", res.MergedInventory["tablet"])
 	}
 }
+
+func TestGetLocalStock(t *testing.T) {
+	db, _ := sql.Open("sqlite", ":memory:")
+	defer db.Close()
+	storage.InitDB(db)
+	srv := NewNodeServer("node-A", db)
+
+	// Seed the database with known state
+	storage.UpdateItem(db, "monitor", 45)
+	localClock := &pb.VectorClock{Clocks: map[string]int32{"node-A": 2}}
+	storage.SaveVectorClock(db, localClock)
+
+	req := &pb.GetStockRequest{ItemId: "monitor"}
+	res, err := srv.GetLocalStock(context.Background(), req)
+
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	// Verify the correct quantity is returned
+	if res.Quantity != 45 {
+		t.Errorf("Expected quantity 45, got %d", res.Quantity)
+	}
+	// Verify the clock did NOT tick
+	if res.CurrentClock.Clocks["node-A"] != 2 {
+		t.Errorf("Expected clock to remain 2, got %d", res.CurrentClock.Clocks["node-A"])
+	}
+}
