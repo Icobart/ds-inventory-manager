@@ -17,6 +17,8 @@ func main() {
 	target := flag.String("target", "localhost:50051", "The address of the local warehouse node")
 	itemID := flag.String("item", "", "The ID of the item to update")
 	quantity := flag.Int("add", 0, "The quantity to add (use negative numbers to deduct)")
+	get := flag.Bool("get", false, "Fetch the current stock for a specific item")
+	all := flag.Bool("all", false, "Fetch the entire local inventory state")
 	flag.Parse()
 	if *itemID == "" {
 		log.Fatal("Error: You must provide an -item ID")
@@ -37,6 +39,32 @@ func main() {
 	req := &pb.UpdateStockRequest{
 		ItemId:         *itemID,
 		QuantityChange: int32(*quantity),
+	}
+
+	// Get Full Inventory
+	if *all {
+		res, err := client.GetFullInventory(ctx, &pb.GetInventoryRequest{})
+		if err != nil {
+			log.Fatalf("RPC call failed: %v", err)
+		}
+		log.Printf("INVENTORY: %v", res.Items)
+		log.Printf("VECTOR CLOCK: %v", res.CurrentClock.Clocks)
+		return
+	}
+
+	if *itemID == "" {
+		log.Fatal("Error: You must provide an -item ID for -add or -get commands")
+	}
+
+	// Get Single Item
+	if *get {
+		res, err := client.GetLocalStock(ctx, &pb.GetStockRequest{ItemId: *itemID})
+		if err != nil {
+			log.Fatalf("RPC call failed: %v", err)
+		}
+		log.Printf("STOCK: %s = %d", *itemID, res.Quantity)
+		log.Printf("VECTOR CLOCK: %v", res.CurrentClock.Clocks)
+		return
 	}
 
 	// Call the RPC method on the server
