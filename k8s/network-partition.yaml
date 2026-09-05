@@ -1,0 +1,11 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: isolate-node-a
+spec:
+  podSelector:
+    matchLabels:
+      app: warehouse-node-a
+  policyTypes:
+  - Ingress
+  - Egress
