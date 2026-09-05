@@ -85,3 +85,34 @@ func TestSyncLedger(t *testing.T) {
 		t.Errorf("Expected merged inventory for item-1 to be 90, got %d", res.MergedInventory["item-1"])
 	}
 }
+
+func TestSyncLedger_ConcurrentMerge(t *testing.T) {
+	db, _ := sql.Open("sqlite", ":memory:")
+	defer db.Close()
+	storage.InitDB(db)
+	srv := NewNodeServer("node-A", db)
+
+	// Simulate Local State: Node A processed 50 units locally while isolated
+	storage.UpdateItem(db, "tablet", 50)
+	localClock := &pb.VectorClock{Clocks: map[string]int32{"node-A": 1}}
+	storage.SaveVectorClock(db, localClock)
+
+	// Simulate Remote State: Node B processed 100 units concurrently
+	// Because neither clock knows about the other's tick
+	remoteClock := &pb.VectorClock{Clocks: map[string]int32{"node-B": 1}}
+	req := &pb.SyncLedgerRequest{
+		SourceNodeId: "node-B",
+		Clock:        remoteClock,
+		Inventory:    map[string]int32{"tablet": 100},
+	}
+
+	res, err := srv.SyncLedger(context.Background(), req)
+
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	// The inventory must safely add the concurrent changes (50 + 100 = 150)
+	if res.MergedInventory["tablet"] != 150 {
+		t.Errorf("Expected merged inventory for tablet to be 150, got %d", res.MergedInventory["tablet"])
+	}
+}
