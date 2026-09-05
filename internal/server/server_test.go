@@ -143,3 +143,34 @@ func TestGetLocalStock(t *testing.T) {
 		t.Errorf("Expected clock to remain 2, got %d", res.CurrentClock.Clocks["node-A"])
 	}
 }
+
+func TestGetFullInventory(t *testing.T) {
+	db, _ := sql.Open("sqlite", ":memory:")
+	defer db.Close()
+	storage.InitDB(db)
+	srv := NewNodeServer("node-A", db)
+
+	// Seed multiple items
+	storage.UpdateItem(db, "monitor", 45)
+	storage.UpdateItem(db, "keyboard", 100)
+	localClock := &pb.VectorClock{Clocks: map[string]int32{"node-A": 2}}
+	storage.SaveVectorClock(db, localClock)
+
+	req := &pb.GetInventoryRequest{}
+	res, err := srv.GetFullInventory(context.Background(), req)
+
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	// Verify all items are present and accurate
+	if len(res.Items) != 2 {
+		t.Errorf("Expected 2 items in inventory, got %d", len(res.Items))
+	}
+	if res.Items["keyboard"] != 100 {
+		t.Errorf("Expected keyboard quantity 100, got %d", res.Items["keyboard"])
+	}
+	// Verify the clock did not tick
+	if res.CurrentClock.Clocks["node-A"] != 2 {
+		t.Errorf("Expected clock to remain 2, got %d", res.CurrentClock.Clocks["node-A"])
+	}
+}

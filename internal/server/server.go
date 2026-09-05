@@ -103,3 +103,19 @@ func (s *NodeServer) GetLocalStock(ctx context.Context, req *pb.GetStockRequest)
 		CurrentClock: vc,
 	}, nil
 }
+
+// GetFullInventory retrieves the entire local database state.
+func (s *NodeServer) GetFullInventory(ctx context.Context, req *pb.GetInventoryRequest) (*pb.GetInventoryResponse, error) {
+	inventory, err := storage.GetAllItems(s.db)
+	if err != nil {
+		return nil, err
+	}
+	vc, err := storage.GetVectorClock(s.db)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetInventoryResponse{
+		Items:        inventory,
+		CurrentClock: vc,
+	}, nil
+}
