@@ -18,6 +18,20 @@ message UpdateStockResponse {
     VectorClock current_clock = 3; // Returns the updated clock after the operation
 }
 
+message GetStockRequest {
+    string item_id = 1;
+}
+message GetStockResponse {
+    int32 quantity = 1;
+    VectorClock current_clock = 2;
+}
+message GetInventoryRequest {}
+
+message GetInventoryResponse {
+    map<string, int32> items = 1;
+    VectorClock current_clock = 2;
+}
+
 // Node <-> Node Messages
 message SyncLedgerRequest {
     string source_node_id = 1;
@@ -34,5 +48,7 @@ message SyncLedgerResponse {
 service InventoryManager {
     rpc UpdateLocalStock (UpdateStockRequest) returns (UpdateStockResponse);
     rpc SyncLedger (SyncLedgerRequest) returns (SyncLedgerResponse);
+    rpc GetLocalStock(GetStockRequest) returns (GetStockResponse);
+    rpc GetFullInventory(GetInventoryRequest) returns (GetInventoryResponse);
 }
 

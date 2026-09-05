@@ -21,6 +21,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	InventoryManager_UpdateLocalStock_FullMethodName = "/InventoryManager/UpdateLocalStock"
 	InventoryManager_SyncLedger_FullMethodName       = "/InventoryManager/SyncLedger"
+	InventoryManager_GetLocalStock_FullMethodName    = "/InventoryManager/GetLocalStock"
+	InventoryManager_GetFullInventory_FullMethodName = "/InventoryManager/GetFullInventory"
 )
 
 // InventoryManagerClient is the client API for InventoryManager service.
@@ -29,6 +31,8 @@ const (
 type InventoryManagerClient interface {
 	UpdateLocalStock(ctx context.Context, in *UpdateStockRequest, opts ...grpc.CallOption) (*UpdateStockResponse, error)
 	SyncLedger(ctx context.Context, in *SyncLedgerRequest, opts ...grpc.CallOption) (*SyncLedgerResponse, error)
+	GetLocalStock(ctx context.Context, in *GetStockRequest, opts ...grpc.CallOption) (*GetStockResponse, error)
+	GetFullInventory(ctx context.Context, in *GetInventoryRequest, opts ...grpc.CallOption) (*GetInventoryResponse, error)
 }
 
 type inventoryManagerClient struct {
@@ -59,12 +63,34 @@ func (c *inventoryManagerClient) SyncLedger(ctx context.Context, in *SyncLedgerR
 	return out, nil
 }
 
+func (c *inventoryManagerClient) GetLocalStock(ctx context.Context, in *GetStockRequest, opts ...grpc.CallOption) (*GetStockResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetStockResponse)
+	err := c.cc.Invoke(ctx, InventoryManager_GetLocalStock_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *inventoryManagerClient) GetFullInventory(ctx context.Context, in *GetInventoryRequest, opts ...grpc.CallOption) (*GetInventoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInventoryResponse)
+	err := c.cc.Invoke(ctx, InventoryManager_GetFullInventory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InventoryManagerServer is the server API for InventoryManager service.
 // All implementations must embed UnimplementedInventoryManagerServer
 // for forward compatibility.
 type InventoryManagerServer interface {
 	UpdateLocalStock(context.Context, *UpdateStockRequest) (*UpdateStockResponse, error)
 	SyncLedger(context.Context, *SyncLedgerRequest) (*SyncLedgerResponse, error)
+	GetLocalStock(context.Context, *GetStockRequest) (*GetStockResponse, error)
+	GetFullInventory(context.Context, *GetInventoryRequest) (*GetInventoryResponse, error)
 	mustEmbedUnimplementedInventoryManagerServer()
 }
 
@@ -80,6 +106,12 @@ func (UnimplementedInventoryManagerServer) UpdateLocalStock(context.Context, *Up
 }
 func (UnimplementedInventoryManagerServer) SyncLedger(context.Context, *SyncLedgerRequest) (*SyncLedgerResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncLedger not implemented")
+}
+func (UnimplementedInventoryManagerServer) GetLocalStock(context.Context, *GetStockRequest) (*GetStockResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetLocalStock not implemented")
+}
+func (UnimplementedInventoryManagerServer) GetFullInventory(context.Context, *GetInventoryRequest) (*GetInventoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFullInventory not implemented")
 }
 func (UnimplementedInventoryManagerServer) mustEmbedUnimplementedInventoryManagerServer() {}
 func (UnimplementedInventoryManagerServer) testEmbeddedByValue()                          {}
@@ -138,6 +170,42 @@ func _InventoryManager_SyncLedger_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InventoryManager_GetLocalStock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventoryManagerServer).GetLocalStock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventoryManager_GetLocalStock_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventoryManagerServer).GetLocalStock(ctx, req.(*GetStockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InventoryManager_GetFullInventory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInventoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventoryManagerServer).GetFullInventory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventoryManager_GetFullInventory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventoryManagerServer).GetFullInventory(ctx, req.(*GetInventoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InventoryManager_ServiceDesc is the grpc.ServiceDesc for InventoryManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +220,14 @@ var InventoryManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SyncLedger",
 			Handler:    _InventoryManager_SyncLedger_Handler,
+		},
+		{
+			MethodName: "GetLocalStock",
+			Handler:    _InventoryManager_GetLocalStock_Handler,
+		},
+		{
+			MethodName: "GetFullInventory",
+			Handler:    _InventoryManager_GetFullInventory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

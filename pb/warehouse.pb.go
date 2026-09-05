@@ -178,6 +178,190 @@ func (x *UpdateStockResponse) GetCurrentClock() *VectorClock {
 	return nil
 }
 
+type GetStockRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ItemId        string                 `protobuf:"bytes,1,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetStockRequest) Reset() {
+	*x = GetStockRequest{}
+	mi := &file_proto_warehouse_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetStockRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetStockRequest) ProtoMessage() {}
+
+func (x *GetStockRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_warehouse_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetStockRequest.ProtoReflect.Descriptor instead.
+func (*GetStockRequest) Descriptor() ([]byte, []int) {
+	return file_proto_warehouse_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetStockRequest) GetItemId() string {
+	if x != nil {
+		return x.ItemId
+	}
+	return ""
+}
+
+type GetStockResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Quantity      int32                  `protobuf:"varint,1,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	CurrentClock  *VectorClock           `protobuf:"bytes,2,opt,name=current_clock,json=currentClock,proto3" json:"current_clock,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetStockResponse) Reset() {
+	*x = GetStockResponse{}
+	mi := &file_proto_warehouse_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetStockResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetStockResponse) ProtoMessage() {}
+
+func (x *GetStockResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_warehouse_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetStockResponse.ProtoReflect.Descriptor instead.
+func (*GetStockResponse) Descriptor() ([]byte, []int) {
+	return file_proto_warehouse_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetStockResponse) GetQuantity() int32 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *GetStockResponse) GetCurrentClock() *VectorClock {
+	if x != nil {
+		return x.CurrentClock
+	}
+	return nil
+}
+
+type GetInventoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInventoryRequest) Reset() {
+	*x = GetInventoryRequest{}
+	mi := &file_proto_warehouse_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInventoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInventoryRequest) ProtoMessage() {}
+
+func (x *GetInventoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_warehouse_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInventoryRequest.ProtoReflect.Descriptor instead.
+func (*GetInventoryRequest) Descriptor() ([]byte, []int) {
+	return file_proto_warehouse_proto_rawDescGZIP(), []int{5}
+}
+
+type GetInventoryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         map[string]int32       `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	CurrentClock  *VectorClock           `protobuf:"bytes,2,opt,name=current_clock,json=currentClock,proto3" json:"current_clock,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInventoryResponse) Reset() {
+	*x = GetInventoryResponse{}
+	mi := &file_proto_warehouse_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInventoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInventoryResponse) ProtoMessage() {}
+
+func (x *GetInventoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_warehouse_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInventoryResponse.ProtoReflect.Descriptor instead.
+func (*GetInventoryResponse) Descriptor() ([]byte, []int) {
+	return file_proto_warehouse_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetInventoryResponse) GetItems() map[string]int32 {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *GetInventoryResponse) GetCurrentClock() *VectorClock {
+	if x != nil {
+		return x.CurrentClock
+	}
+	return nil
+}
+
 // Node <-> Node Messages
 type SyncLedgerRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -190,7 +374,7 @@ type SyncLedgerRequest struct {
 
 func (x *SyncLedgerRequest) Reset() {
 	*x = SyncLedgerRequest{}
-	mi := &file_proto_warehouse_proto_msgTypes[3]
+	mi := &file_proto_warehouse_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -202,7 +386,7 @@ func (x *SyncLedgerRequest) String() string {
 func (*SyncLedgerRequest) ProtoMessage() {}
 
 func (x *SyncLedgerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_warehouse_proto_msgTypes[3]
+	mi := &file_proto_warehouse_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -215,7 +399,7 @@ func (x *SyncLedgerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncLedgerRequest.ProtoReflect.Descriptor instead.
 func (*SyncLedgerRequest) Descriptor() ([]byte, []int) {
-	return file_proto_warehouse_proto_rawDescGZIP(), []int{3}
+	return file_proto_warehouse_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SyncLedgerRequest) GetSourceNodeId() string {
@@ -250,7 +434,7 @@ type SyncLedgerResponse struct {
 
 func (x *SyncLedgerResponse) Reset() {
 	*x = SyncLedgerResponse{}
-	mi := &file_proto_warehouse_proto_msgTypes[4]
+	mi := &file_proto_warehouse_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -262,7 +446,7 @@ func (x *SyncLedgerResponse) String() string {
 func (*SyncLedgerResponse) ProtoMessage() {}
 
 func (x *SyncLedgerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_warehouse_proto_msgTypes[4]
+	mi := &file_proto_warehouse_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -275,7 +459,7 @@ func (x *SyncLedgerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncLedgerResponse.ProtoReflect.Descriptor instead.
 func (*SyncLedgerResponse) Descriptor() ([]byte, []int) {
-	return file_proto_warehouse_proto_rawDescGZIP(), []int{4}
+	return file_proto_warehouse_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SyncLedgerResponse) GetSuccess() bool {
@@ -315,7 +499,20 @@ const file_proto_warehouse_proto_rawDesc = "" +
 	"\x13UpdateStockResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12!\n" +
 	"\fnew_quantity\x18\x02 \x01(\x05R\vnewQuantity\x121\n" +
-	"\rcurrent_clock\x18\x03 \x01(\v2\f.VectorClockR\fcurrentClock\"\xdc\x01\n" +
+	"\rcurrent_clock\x18\x03 \x01(\v2\f.VectorClockR\fcurrentClock\"*\n" +
+	"\x0fGetStockRequest\x12\x17\n" +
+	"\aitem_id\x18\x01 \x01(\tR\x06itemId\"a\n" +
+	"\x10GetStockResponse\x12\x1a\n" +
+	"\bquantity\x18\x01 \x01(\x05R\bquantity\x121\n" +
+	"\rcurrent_clock\x18\x02 \x01(\v2\f.VectorClockR\fcurrentClock\"\x15\n" +
+	"\x13GetInventoryRequest\"\xbb\x01\n" +
+	"\x14GetInventoryResponse\x126\n" +
+	"\x05items\x18\x01 \x03(\v2 .GetInventoryResponse.ItemsEntryR\x05items\x121\n" +
+	"\rcurrent_clock\x18\x02 \x01(\v2\f.VectorClockR\fcurrentClock\x1a8\n" +
+	"\n" +
+	"ItemsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\x05R\x05value:\x028\x01\"\xdc\x01\n" +
 	"\x11SyncLedgerRequest\x12$\n" +
 	"\x0esource_node_id\x18\x01 \x01(\tR\fsourceNodeId\x12\"\n" +
 	"\x05clock\x18\x02 \x01(\v2\f.VectorClockR\x05clock\x12?\n" +
@@ -329,11 +526,13 @@ const file_proto_warehouse_proto_rawDesc = "" +
 	"\x10merged_inventory\x18\x03 \x03(\v2(.SyncLedgerResponse.MergedInventoryEntryR\x0fmergedInventory\x1aB\n" +
 	"\x14MergedInventoryEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x05R\x05value:\x028\x012\x88\x01\n" +
+	"\x05value\x18\x02 \x01(\x05R\x05value:\x028\x012\xff\x01\n" +
 	"\x10InventoryManager\x12=\n" +
 	"\x10UpdateLocalStock\x12\x13.UpdateStockRequest\x1a\x14.UpdateStockResponse\x125\n" +
 	"\n" +
-	"SyncLedger\x12\x12.SyncLedgerRequest\x1a\x13.SyncLedgerResponseB\x06Z\x04./pbb\x06proto3"
+	"SyncLedger\x12\x12.SyncLedgerRequest\x1a\x13.SyncLedgerResponse\x124\n" +
+	"\rGetLocalStock\x12\x10.GetStockRequest\x1a\x11.GetStockResponse\x12?\n" +
+	"\x10GetFullInventory\x12\x14.GetInventoryRequest\x1a\x15.GetInventoryResponseB\x06Z\x04./pbb\x06proto3"
 
 var (
 	file_proto_warehouse_proto_rawDescOnce sync.Once
@@ -347,33 +546,45 @@ func file_proto_warehouse_proto_rawDescGZIP() []byte {
 	return file_proto_warehouse_proto_rawDescData
 }
 
-var file_proto_warehouse_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_proto_warehouse_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_proto_warehouse_proto_goTypes = []any{
-	(*VectorClock)(nil),         // 0: VectorClock
-	(*UpdateStockRequest)(nil),  // 1: UpdateStockRequest
-	(*UpdateStockResponse)(nil), // 2: UpdateStockResponse
-	(*SyncLedgerRequest)(nil),   // 3: SyncLedgerRequest
-	(*SyncLedgerResponse)(nil),  // 4: SyncLedgerResponse
-	nil,                         // 5: VectorClock.ClocksEntry
-	nil,                         // 6: SyncLedgerRequest.InventoryEntry
-	nil,                         // 7: SyncLedgerResponse.MergedInventoryEntry
+	(*VectorClock)(nil),          // 0: VectorClock
+	(*UpdateStockRequest)(nil),   // 1: UpdateStockRequest
+	(*UpdateStockResponse)(nil),  // 2: UpdateStockResponse
+	(*GetStockRequest)(nil),      // 3: GetStockRequest
+	(*GetStockResponse)(nil),     // 4: GetStockResponse
+	(*GetInventoryRequest)(nil),  // 5: GetInventoryRequest
+	(*GetInventoryResponse)(nil), // 6: GetInventoryResponse
+	(*SyncLedgerRequest)(nil),    // 7: SyncLedgerRequest
+	(*SyncLedgerResponse)(nil),   // 8: SyncLedgerResponse
+	nil,                          // 9: VectorClock.ClocksEntry
+	nil,                          // 10: GetInventoryResponse.ItemsEntry
+	nil,                          // 11: SyncLedgerRequest.InventoryEntry
+	nil,                          // 12: SyncLedgerResponse.MergedInventoryEntry
 }
 var file_proto_warehouse_proto_depIdxs = []int32{
-	5, // 0: VectorClock.clocks:type_name -> VectorClock.ClocksEntry
-	0, // 1: UpdateStockResponse.current_clock:type_name -> VectorClock
-	0, // 2: SyncLedgerRequest.clock:type_name -> VectorClock
-	6, // 3: SyncLedgerRequest.inventory:type_name -> SyncLedgerRequest.InventoryEntry
-	0, // 4: SyncLedgerResponse.merged_clock:type_name -> VectorClock
-	7, // 5: SyncLedgerResponse.merged_inventory:type_name -> SyncLedgerResponse.MergedInventoryEntry
-	1, // 6: InventoryManager.UpdateLocalStock:input_type -> UpdateStockRequest
-	3, // 7: InventoryManager.SyncLedger:input_type -> SyncLedgerRequest
-	2, // 8: InventoryManager.UpdateLocalStock:output_type -> UpdateStockResponse
-	4, // 9: InventoryManager.SyncLedger:output_type -> SyncLedgerResponse
-	8, // [8:10] is the sub-list for method output_type
-	6, // [6:8] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	9,  // 0: VectorClock.clocks:type_name -> VectorClock.ClocksEntry
+	0,  // 1: UpdateStockResponse.current_clock:type_name -> VectorClock
+	0,  // 2: GetStockResponse.current_clock:type_name -> VectorClock
+	10, // 3: GetInventoryResponse.items:type_name -> GetInventoryResponse.ItemsEntry
+	0,  // 4: GetInventoryResponse.current_clock:type_name -> VectorClock
+	0,  // 5: SyncLedgerRequest.clock:type_name -> VectorClock
+	11, // 6: SyncLedgerRequest.inventory:type_name -> SyncLedgerRequest.InventoryEntry
+	0,  // 7: SyncLedgerResponse.merged_clock:type_name -> VectorClock
+	12, // 8: SyncLedgerResponse.merged_inventory:type_name -> SyncLedgerResponse.MergedInventoryEntry
+	1,  // 9: InventoryManager.UpdateLocalStock:input_type -> UpdateStockRequest
+	7,  // 10: InventoryManager.SyncLedger:input_type -> SyncLedgerRequest
+	3,  // 11: InventoryManager.GetLocalStock:input_type -> GetStockRequest
+	5,  // 12: InventoryManager.GetFullInventory:input_type -> GetInventoryRequest
+	2,  // 13: InventoryManager.UpdateLocalStock:output_type -> UpdateStockResponse
+	8,  // 14: InventoryManager.SyncLedger:output_type -> SyncLedgerResponse
+	4,  // 15: InventoryManager.GetLocalStock:output_type -> GetStockResponse
+	6,  // 16: InventoryManager.GetFullInventory:output_type -> GetInventoryResponse
+	13, // [13:17] is the sub-list for method output_type
+	9,  // [9:13] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_proto_warehouse_proto_init() }
@@ -387,7 +598,7 @@ func file_proto_warehouse_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_warehouse_proto_rawDesc), len(file_proto_warehouse_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
