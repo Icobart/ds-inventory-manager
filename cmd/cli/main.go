@@ -20,9 +20,6 @@ func main() {
 	get := flag.Bool("get", false, "Fetch the current stock for a specific item")
 	all := flag.Bool("all", false, "Fetch the entire local inventory state")
 	flag.Parse()
-	if *itemID == "" {
-		log.Fatal("Error: You must provide an -item ID")
-	}
 	log.Printf("Connecting to node at %s...", *target)
 
 	// Connect to the gRPC server (insecure credentials for now, since it's local TCP)
