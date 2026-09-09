@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"database/sql"
+	"sync"
 
 	"github.com/Icobart/ds-inventory-manager/internal/storage"
 	"github.com/Icobart/ds-inventory-manager/internal/vclock"
@@ -14,6 +15,7 @@ type NodeServer struct {
 	pb.UnimplementedInventoryManagerServer
 	nodeID string
 	db     *sql.DB
+	mu     sync.RWMutex
 }
 
 // NewNodeServer creates a new instance of the gRPC server handler.
@@ -26,6 +28,8 @@ func NewNodeServer(nodeID string, db *sql.DB) *NodeServer {
 
 // UpdateLocalStock processes a local inventory change and updates the vector clock.
 func (s *NodeServer) UpdateLocalStock(ctx context.Context, req *pb.UpdateStockRequest) (*pb.UpdateStockResponse, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	currentQty, err := storage.GetItem(s.db, req.ItemId)
 	if err != nil {
 		return nil, err
@@ -53,6 +57,8 @@ func (s *NodeServer) UpdateLocalStock(ctx context.Context, req *pb.UpdateStockRe
 
 // SyncLedger handles incoming state synchronization requests from peer nodes.
 func (s *NodeServer) SyncLedger(ctx context.Context, req *pb.SyncLedgerRequest) (*pb.SyncLedgerResponse, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	localClock, err := storage.GetVectorClock(s.db)
 	if err != nil {
 		return nil, err
@@ -90,6 +96,8 @@ func (s *NodeServer) SyncLedger(ctx context.Context, req *pb.SyncLedgerRequest) 
 }
 
 func (s *NodeServer) GetLocalStock(ctx context.Context, req *pb.GetStockRequest) (*pb.GetStockResponse, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	qty, err := storage.GetItem(s.db, req.ItemId)
 	if err != nil {
 		return nil, err
@@ -106,6 +114,8 @@ func (s *NodeServer) GetLocalStock(ctx context.Context, req *pb.GetStockRequest)
 
 // GetFullInventory retrieves the entire local database state.
 func (s *NodeServer) GetFullInventory(ctx context.Context, req *pb.GetInventoryRequest) (*pb.GetInventoryResponse, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	inventory, err := storage.GetAllItems(s.db)
 	if err != nil {
 		return nil, err
